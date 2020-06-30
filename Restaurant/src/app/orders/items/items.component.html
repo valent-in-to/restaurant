@@ -1,0 +1,47 @@
+
+<form autocomplete="off" #form="ngForm" (submit)="onSubmit(form)">
+
+
+    <!-- hidden inputs for implicit data -->
+    <input type="hidden" name="id" #id="ngModel" [(ngModel)]="formData.id">
+    <input type="hidden" name="itemName" #itemName="ngModel" [(ngModel)]="formData.itemName">
+    <input type="hidden" name="orderId" #orderId="ngModel" [(ngModel)]="formData.orderId">
+
+    <div class="form-group">
+        <label for="item">Item</label>
+        <select name="itemId" #itemId="ngModel" [(ngModel)]="formData.itemId" class="form-control" (change)="updatePrice($event.target)"
+        [class.is-invalid]="!isValid && formData.itemId == 0">
+            <option value="0">--Selecciona un item--</option>
+            <option *ngFor="let item of itemList" value="{{item.id}}">{{item.name}}</option>
+        </select>
+    </div>
+
+    <div class="row form-group col-md-6">
+         <label class="text-justify text-center" for="price">Precio</label>
+        <div class="input-group">
+            <span class="input-group-text" id="basic-addon1">$</span>
+            <input name="price" #price="ngModel" [(ngModel)]="formData.price" class="form-control" readonly>
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <label class="text-justify text-center" for="amount">Cantidad</label>
+            <input type="number" name="amount" #amount="ngModel" [(ngModel)]="formData.amount" class="form-control" 
+            (change)="updateTotal()" [class.is-invalid]="!isValid && formData.amount == 0">
+        </div>
+
+        <div class="form-group col-md-6">
+            <label class="text-justify text-center" for="total">Total</label>
+            <div class="input-group">
+                <span class="input-group-text" id="basic-addon1">$</span>
+                <input name="total" #total="ngModel" [(ngModel)]="formData.total" class="form-control" readonly>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <button type="button" [mat-dialog-close] class="btn btn-danger float-left">Cancelar</button>
+        <button type="submit" class="btn btn-success float-right"><b>Aceptar</b></button>
+    </div>
+</form>
