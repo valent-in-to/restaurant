@@ -4,7 +4,7 @@
         <th>Cliente</th>
         <th>Mozo</th>
         <th>Hora</th>
-        <th></th>
+        <th><a routerLink="/order" class="btn btn-outline-success">Nuevo Pedido</a></th>
     </thead>
     <tbody>
         <tr *ngFor="let item of orderList">
@@ -12,6 +12,8 @@
             <td> {{ item.customer }} </td>
             <td> {{ item.waiter }} </td>
             <td> {{ item.time }} </td>
+            <td *ngIf="item.orderType == 1"> En local</td>
+            <td *ngIf="item.orderType == 0"> Para llevar </td>
         </tr>
     </tbody>
 </table>

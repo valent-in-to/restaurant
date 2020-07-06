@@ -17,3 +17,19 @@ def login_required(f):
             return redirect("/login")
         return f(*args, **kwargs)
     return decorated_function
+
+def query(db, query, arg):
+    if not arg:
+        arg = ""
+    conn = sqlite3.connect(db)
+    cur = conn.cursor()
+
+    cur.execute(query, [arg]) 
+    return cur.fetchall()
+
+def querym(db, query, args):
+    conn = sqlite3.connect(db)
+    cur = conn.cursor()
+
+    cur.executemany(query, (args,)) 
+    return cur.fetchall()

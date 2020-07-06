@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { OrderService } from 'src/app/shared/order.service';
-import { WaiterService } from 'src/app/shared/waiter.service'
 
 import { NgForm } from '@angular/forms';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog'
 import { ItemsComponent } from '../items/items.component';
 import { Router } from '@angular/router';
+import { UserService } from 'src/app/shared/user.service';
 
 
 
@@ -19,15 +19,17 @@ export class OrderComponent implements OnInit {
 
   constructor( public service: OrderService,
     private dialog: MatDialog,
-    private waiterService: WaiterService,
-    private router: Router ) { }
+    private router: Router,
+    private userService: UserService ) { }
 
   ngOnInit(): void {
     this.resetForm();
-
-    
-    this.waiterService.getWaiter().then(res => this.service.formData.waiter = JSON.stringify(res)) 
- 
+    let userData = this.userService.getUserData()
+    console.log(userData)
+    if (userData != null)
+    { 
+    this.service.formData.waiter = userData.identity.name
+    }
   }
 
   resetForm( form?:NgForm ){
@@ -41,6 +43,7 @@ export class OrderComponent implements OnInit {
       customerName: null,
       gTotal: 0,
       orderType: 0,
+
     }
 
     this.service.orderItems = []

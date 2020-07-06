@@ -1,72 +1,94 @@
 from flask import Flask, request, jsonify, render_template, redirect,Response, json, session
 from flask_cors import CORS, cross_origin
-from flask_session import Session
-from tempfile import mkdtemp
-from helpers import login_required
 import sqlite3
+from helpers import query, querym
+
+from flask_jwt_extended import create_access_token, JWTManager
 
 
 app = Flask(__name__)
 CORS(app)
-
-app.config["TEMPLATES_AUTO_RELOAD"] = True
-
-# Configure session to use filesystem (instead of signed cookies)
-app.config["SESSION_FILE_DIR"] = mkdtemp()
-app.config["SESSION_PERMANENT"] = False
-app.config["SESSION_TYPE"] = "filesystem"
-Session(app)
+jwt = JWTManager(app) 
+#app.config["TEMPLATES_AUTO_RELOAD"] = True
+app.config['SECRET_KEY'] = 'elgaty'
 
 
 DATABASE = 'restaurant.db'
 
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('/login', methods=[ 'POST'])
+@cross_origin()
 def login():
     if request.method == 'POST':
 
-        name = request.form['name']
-        psw = request.form['psw']
+        data = request.json
+        name = data["username"]
+        psw = data["password"]
 
         conn = sqlite3.connect(DATABASE)
         cur = conn.cursor()
 
         cur.execute('SELECT name, pw FROM waiters WHERE name=?', [name]) 
-        dbusr = cur.fetchall()
+        dbusr = cur.fetchone()
+        conn.close()
+  
+        
+        if dbusr[0] != name:
+            return "usuario no encontrado", 401
+            
+        if str(dbusr[1]) != psw:
+            return "contraseña incorrecta", 401
+            
 
-        print(dbusr[0][1])
-        if len(dbusr) != 1 or str(dbusr[0][1]) != psw:
-            return redirect('/login')
+        token = create_access_token(identity={'name': name})
+        
 
-
-        session["user_id"] = dbusr[0][0]
-        return redirect("/")
+        
+        return jsonify({"token": token}), 200
+        
 
    
     if "user_id" in session:
             return redirect('/')
     return render_template('login.html')
 
+#RUTA DE REGISTRO
 
+@app.route('/signup', methods=['POST'])
+def register():
+
+    try:
+        data = request.json
+
+        ARGS = [ data["username"], data["password"] ]
+
+        conn = sqlite3.connect(DATABASE)
+        cur = conn.cursor()
+
+        cur.executemany("INSERT INTO waiters(name, pw) VALUES(?,?)", (ARGS,)) 
+        conn.commit()
+        conn.close()
+    except: 
+
+        return "error en registro, posiblemente el nombre ya existe", 400
+    
+    resp = jsonify(success=True)
+    return resp
 
 
 @app.route('/')
-#login_required
+
 def index():
     return render_template('index.html')
 
-@app.route('/order')
-def orderRedirect():
-    return redirect('/')
-
-
 
 @app.route('/item' , methods=['GET'])
-#login_required
+
 def getItemList():
     conn = sqlite3.connect(DATABASE)
     cur = conn.cursor()
     cur.execute('SELECT * FROM items')
     items = cur.fetchall()
+    conn.close()
     
 
     dictresp = []
@@ -80,16 +102,14 @@ def getItemList():
     return jsonify(dictresp)
 
 @app.route('/waiter' , methods=['GET'])
-@login_required
+
 def getWaiter():
+    return jsonify("papu")
 
-
-    return jsonify(session["user_id"])
 
 @app.route('/add-order', methods=['POST', 'OPTIONS'])
 @cross_origin(origin='*', headers=['Content-Type','Authorization'])
-@login_required
-def addOrder(  ):
+def addOrder():
     
     data = json.loads(request.data)
 
@@ -114,6 +134,7 @@ def addOrder(  ):
         cur.executemany('INSERT INTO orders("orderNo","table","waiter","orderType") VALUES(?,?,?,?)', (orders_var,)) 
         cur.executemany('INSERT INTO orderItems VALUES(?,?,?)', (order_items_var),)
         conn.commit()
+        
     except:
         print("Error uploading order to database")
     finally:
@@ -125,24 +146,24 @@ def addOrder(  ):
 
 @app.route('/orders', methods=['GET'])
 @cross_origin(origin='*', headers=['Content-Type','Authorization'])
-#login_required
+
 def getOrders():
 
     try:
         conn = sqlite3.connect(DATABASE)
         cur = conn.cursor()
-        cur.execute('SELECT * FROM orders') 
+        cur.execute('SELECT * FROM orders ORDER BY id DESC') 
         orders_q = cur.fetchall()
         
         dictresp = []
-        print(orders_q)
+      
         for row in orders_q:
             x = {}
             x["orderNo"] = row[1]
             x["customer"] = row[2]
             x["waiter"] = row[3]
             x["orderType"] = row[4]
-            x["time"] = row[6]
+            x["time"] = row[6][:5]
             dictresp.append(x)
 
 
@@ -155,5 +176,7 @@ def getOrders():
 
     return "xd"
 
-app.run(host= '0.0.0.0', debug=True,port="5000")
+if __name__ == "__main__":
+    app.run(host= '0.0.0.0', debug=True,port="5000")
+
 	

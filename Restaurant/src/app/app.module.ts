@@ -15,6 +15,14 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { MatDialogModule } from '@angular/material/dialog';
 
 import { HttpClientModule } from "@angular/common/http";
+import { UserComponent } from './user/user.component';
+import { SignUpComponent } from './user/sign-up/sign-up.component';
+import { LoginComponent } from './user/login/login.component';
+import { UserService } from './shared/user.service';
+import { ItemService } from './shared/item.service';
+
+import { AuthGuardService } from "./shared/auth-guard.service";
+import { AdminGuardService } from "./shared/admin-guard.service";
 
 
 
@@ -24,7 +32,10 @@ import { HttpClientModule } from "@angular/common/http";
     AppComponent,
     OrdersComponent,
     OrderComponent,
-    ItemsComponent
+    ItemsComponent,
+    UserComponent,
+    SignUpComponent,
+    LoginComponent
   ],
   imports: [
     BrowserModule,
@@ -41,6 +52,10 @@ import { HttpClientModule } from "@angular/common/http";
   ],
   providers: [
     OrderService,
+    UserService,
+    ItemService,
+    AuthGuardService,
+    AdminGuardService
   ],
   bootstrap: [AppComponent]
 })
