@@ -10,7 +10,7 @@ import { AdminGuardService } from './shared/admin-guard.service';
 
 
 const routes: Routes = [
-  {path:'', redirectTo:'order', pathMatch:'full', },
+  {path:'', redirectTo:'orders', pathMatch:'full', },
   {path:'orders', component:OrdersComponent, canActivate:[AuthGuardService]},
   {path:'order', canActivate:[AuthGuardService] ,children:[
     {path:'', component:OrderComponent},

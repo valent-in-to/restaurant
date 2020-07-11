@@ -1,10 +1,10 @@
-from flask import Flask, request, jsonify, render_template, redirect,Response, json, session
+from flask import Flask, request, jsonify, render_template, redirect,Response, json, session, send_file
 from flask_cors import CORS, cross_origin
 import sqlite3
 from helpers import query, querym
 
 from flask_jwt_extended import create_access_token, JWTManager
-
+ROOT = '/api'
 
 app = Flask(__name__)
 CORS(app)
@@ -15,7 +15,13 @@ app.config['SECRET_KEY'] = 'elgaty'
 
 DATABASE = 'restaurant.db'
 
-@app.route('/login', methods=[ 'POST'])
+
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def catch_all(path):
+    return render_template('index.html')
+
+@app.route(ROOT + '/login', methods=[ 'POST'])
 @cross_origin()
 def login():
     if request.method == 'POST':
@@ -53,7 +59,7 @@ def login():
 
 #RUTA DE REGISTRO
 
-@app.route('/signup', methods=['POST'])
+@app.route(ROOT + '/signup', methods=['POST'])
 def register():
 
     try:
@@ -75,13 +81,9 @@ def register():
     return resp
 
 
-@app.route('/')
-
-def index():
-    return render_template('index.html')
 
 
-@app.route('/item' , methods=['GET'])
+@app.route(ROOT + '/item' , methods=['GET'])
 
 def getItemList():
     conn = sqlite3.connect(DATABASE)
@@ -101,26 +103,23 @@ def getItemList():
 
     return jsonify(dictresp)
 
-@app.route('/waiter' , methods=['GET'])
-
-def getWaiter():
-    return jsonify("papu")
 
 
-@app.route('/add-order', methods=['POST', 'OPTIONS'])
+@app.route(ROOT + '/add-order', methods=['POST', 'OPTIONS'])
 @cross_origin(origin='*', headers=['Content-Type','Authorization'])
 def addOrder():
     
     data = json.loads(request.data)
-
+    print(data)
     if not data:
-        return("error")
+        return("error", 401)
 
     orders_var = [
         int(data["orderNo"]),
         str(data["customerName"]),
         str(data["waiter"]),
-        int(data["orderType"])
+        int(data["orderType"]),
+        int(data["gTotal"])
     ]
 
     order_items_var = []
@@ -131,7 +130,7 @@ def addOrder():
     try:
         conn = sqlite3.connect(DATABASE)
         cur = conn.cursor()
-        cur.executemany('INSERT INTO orders("orderNo","table","waiter","orderType") VALUES(?,?,?,?)', (orders_var,)) 
+        cur.executemany('INSERT INTO orders("orderNo","table","waiter","orderType","total") VALUES(?,?,?,?,?)', (orders_var,)) 
         cur.executemany('INSERT INTO orderItems VALUES(?,?,?)', (order_items_var),)
         conn.commit()
         
@@ -144,19 +143,18 @@ def addOrder():
     resp = jsonify(success=True)
     return resp
 
-@app.route('/orders', methods=['GET'])
+@app.route(ROOT + '/orders', methods=['GET'])
 @cross_origin(origin='*', headers=['Content-Type','Authorization'])
-
 def getOrders():
 
     try:
         conn = sqlite3.connect(DATABASE)
         cur = conn.cursor()
-        cur.execute('SELECT * FROM orders ORDER BY id DESC') 
+        cur.execute('SELECT * FROM orders WHERE status != 0 ORDER BY status DESC,id DESC') 
         orders_q = cur.fetchall()
         
         dictresp = []
-      
+
         for row in orders_q:
             x = {}
             x["orderNo"] = row[1]
@@ -164,6 +162,7 @@ def getOrders():
             x["waiter"] = row[3]
             x["orderType"] = row[4]
             x["time"] = row[6][:5]
+            x["status"] = row[7]
             dictresp.append(x)
 
 
@@ -176,7 +175,50 @@ def getOrders():
 
     return "xd"
 
+@app.route(ROOT + '/update-status', methods=['POST'])
+def updateOrderStatus():
+    req = request.get_json()
+    
+    try:
+        updated_values = [  req["status"],req["orderNo"], ]
+        
+        
+        conn = sqlite3.connect(DATABASE)
+        cur = conn.cursor()
+        cur.executemany('UPDATE orders SET status=? WHERE orderNo=?', (updated_values,)) 
+        conn.commit()
+        conn.close()
+
+        resp = jsonify(success=True)
+        return resp
+    except:
+        return "error updating order status", 400
+    
+
+@app.route(ROOT + '/get-order-items', methods=['POST'])
+def getOrderDetails():
+
+    orderno = request.get_json()
+    print(orderno)
+
+    conn = sqlite3.connect(DATABASE)
+    cur = conn.cursor()
+    cur.execute('SELECT items.name, items.price, orderItems.amount FROM items JOIN orderItems ON items.id = orderItems.item_id WHERE orderItems.order_id = ?', (orderno,)) 
+    res_query = cur.fetchall()
+    
+    dictresp = []
+    for i in res_query:
+        x = {}
+        x["itemName"] = i[0]
+        x["itemPrice"] = i[1]
+        x["itemAmount"] = i[2]
+        x["itemTotal"] = x["itemPrice"] * x["itemAmount"]
+        dictresp.append(x)
+    
+
+    return jsonify(dictresp)
+
 if __name__ == "__main__":
-    app.run(host= '0.0.0.0', debug=True,port="5000")
+    app.run(host= '0.0.0.0', debug=True,port="5000", threaded=True)
 
 	

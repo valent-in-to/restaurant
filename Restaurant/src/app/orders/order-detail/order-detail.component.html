@@ -1,0 +1,23 @@
+<div class="container">
+    <table class="table">
+        <thead>
+            <th>#</th>
+            <th>Item</th>
+            <th>Precio</th>
+            <th>Total</th>
+        </thead>
+        <tbody>
+            <tr *ngFor="let item of itemList"> 
+                <td>{{ item.itemAmount }} </td>
+                <td>{{ item.itemName }}</td>
+                <td>{{ item.itemPrice }}</td>
+                <td> {{item.itemTotal}}  </td>
+            </tr>
+            <tr>
+                <td colspan="2"><b>TOTAL:</b></td>
+                <td colspan="2">$<b>{{ this.total }}</b></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<button type="button" [mat-dialog-close] class="btn btn-danger float-left">Salir</button>

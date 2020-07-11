@@ -36,13 +36,13 @@
 
 
     <!-- items table -->
-    <table class="table table-borderless">
+    <table class="table">
         <thead class="thead">
             <th>Item</th>
             <th>Precio</th>
             <th>#</th>
             <th>Total</th>
-            <th><a (click)="addEditItem(null,service.formData.id)" class="btn btn-success text-light"><b>+</b></a></th>
+            <th><a (click)="addEditItem(null,service.formData.id)" class="btn btn-success text-light"><i class="material-icons" style="font-size: 16px;">add</i></a></th>
         </thead>
         <tbody>
             <!-- display if no items -->
@@ -56,7 +56,9 @@
                 <td>{{ item.amount }}</td>
                 <td>{{ item.total }}</td>
                 <div class="btn-group" role="group">
-                    <th><a (click)="addEditItem(i,service.formData.id)" class="btn btn-warning">e</a><a (click)="onDeleteOrderItem(item.id, i)" class="btn btn-danger text-white">x</a></th>
+                    <td><a (click)="addEditItem(i,service.formData.id)" class="btn btn-warning"><i class="material-icons" style="font-size: 16px;">edit</i></a>
+                        <a (click)="onDeleteOrderItem(item.id, i)" class="btn btn-danger text-white"><i class="material-icons" style="font-size: 16px;">delete</i></a>
+                    </td>
                 </div>
             </tr>
         </tbody>
@@ -64,7 +66,7 @@
 
     <div class="form-group row">
     
-        <a href="/orders" class="btn btn-danger col">Cancelar</a>
+        <button [routerLink]="'../orders'" class="btn btn-danger col">Cancelar</button>
         <button type="submit" class="btn btn-success col"><b>Aceptar</b></button>
     </div>
 </div>

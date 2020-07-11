@@ -1,0 +1,1 @@
+1- si al registrarte te redirecciona a pedidos y aparece el nombre del nuevo usuario significa que tuvo éxito. Si no pasa nada, probablemente es porque el usuario ya se encuentra registrado.

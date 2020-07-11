@@ -5,4 +5,5 @@ export class Order {
     gTotal: number;
     waiter?: string;
     orderType: number;
+    status: number;
 }

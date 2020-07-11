@@ -23,6 +23,8 @@ import { ItemService } from './shared/item.service';
 
 import { AuthGuardService } from "./shared/auth-guard.service";
 import { AdminGuardService } from "./shared/admin-guard.service";
+import { OrderDetailComponent } from './orders/order-detail/order-detail.component';
+
 
 
 
@@ -35,7 +37,8 @@ import { AdminGuardService } from "./shared/admin-guard.service";
     ItemsComponent,
     UserComponent,
     SignUpComponent,
-    LoginComponent
+    LoginComponent,
+    OrderDetailComponent
   ],
   imports: [
     BrowserModule,
@@ -44,7 +47,8 @@ import { AdminGuardService } from "./shared/admin-guard.service";
     FormsModule,
     BrowserAnimationsModule,
     MatDialogModule,
-    HttpClientModule
+    HttpClientModule,
+    
     
   ],
   entryComponents: [

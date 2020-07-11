@@ -1,19 +1,29 @@
-<table class="table table-hover">
-    <thead class="thead-light">
-        <th>Orden #</th>
-        <th>Cliente</th>
-        <th>Mozo</th>
-        <th>Hora</th>
-        <th><a routerLink="/order" class="btn btn-outline-success">Nuevo Pedido</a></th>
-    </thead>
-    <tbody>
-        <tr *ngFor="let item of orderList">
-            <th> {{ item.orderNo }} </th>
-            <td> {{ item.customer }} </td>
-            <td> {{ item.waiter }} </td>
-            <td> {{ item.time }} </td>
-            <td *ngIf="item.orderType == 1"> En local</td>
-            <td *ngIf="item.orderType == 0"> Para llevar </td>
-        </tr>
-    </tbody>
-</table>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <button class="btn btn-primary my-2 my-sm-0 text-white" 
+    style="width: 100vw;" [routerLink]="'../order'" >Nuevo Pedido</button>
+</nav>
+
+<div class="container">
+        <div class="card mt-2 pt-2 mb-2 pb-2" *ngFor="let item of orderList" [class.bg-success]="item.status == 2" [class.text-white]="item.status == 2" >
+            <div class="card-header">
+                <h5 *ngIf="item.orderType==1"class="card-title text-center">Mesa: {{ item.customer }}</h5>
+                <h5 *ngIf="item.orderType==0"class="card-title text-center">Cliente: {{ item.customer }}</h5>
+            </div>
+            <div class="card-body" style="@media screen (min-width: 600px) {
+                text-align: center;
+            } ">
+                
+                <ul> Mozo/a: {{ item.waiter }} </ul>
+                <ul> Hora: {{ item.time }} </ul>
+                <ul *ngIf="item.status == 1">Estado: En preparación </ul>
+                <ul *ngIf="item.status == 2">Estado: Listo  </ul>
+                <ul *ngIf="item.orderType == 1"> Tipo: En local</ul>
+                <ul *ngIf="item.orderType == 0"> Tipo: Para llevar </ul>
+                <div class="card-links d-flex justify-content-center">
+                    <button type="button" class="btn btn-primary" (click)="getOrderDetail(item.orderNo)">Ver Detalle</button>
+                    <button type="button" *ngIf="getUserType()" (click)="updateStatus(item)" class="btn btn-primary">Actualizar Estado</button>
+                </div>
+                
+            </div>
+        </div>
+</div>

@@ -25,7 +25,7 @@ export class OrderComponent implements OnInit {
   ngOnInit(): void {
     this.resetForm();
     let userData = this.userService.getUserData()
-    console.log(userData)
+
     if (userData != null)
     { 
     this.service.formData.waiter = userData.identity.name
@@ -43,7 +43,7 @@ export class OrderComponent implements OnInit {
       customerName: null,
       gTotal: 0,
       orderType: 0,
-
+      status: 1
     }
 
     this.service.orderItems = []

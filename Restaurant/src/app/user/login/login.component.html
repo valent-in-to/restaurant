@@ -1,0 +1,16 @@
+
+<div class="text-center formcontainer">
+    <form class="form-signin" #loginForm="ngForm" (ngSubmit)="login(loginForm)">
+      <img class="mb-4" src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Q11707_noun_11637_ccFedericoPanzano_restaurant.svg/1200px-Q11707_noun_11637_ccFedericoPanzano_restaurant.svg.png" alt="" width="30%" height="30%">
+      
+      <label for="username" class="sr-only">Nombre</label>
+      <input type="text"  class="form-control" placeholder="Nombre" name="username" #username="ngModel" [(ngModel)]="user.username" required autofocus>
+
+      <label for="password" class="sr-only">Password</label>
+      <input type="password" class="form-control" placeholder="Contraseña" name="password" #password="ngModel" 
+      [(ngModel)]="user.password" required>
+      
+      <button class="btn btn-lg btn-primary btn-block" type="submit">Ingresar</button>
+      
+    </form>
+</div>
