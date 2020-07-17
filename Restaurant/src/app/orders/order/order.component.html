@@ -1,7 +1,5 @@
-<div class="jumbotron" style="width: 100%; height: 10%;">
-    
-</div> 
 
+<div class="container pt-5">
 <form class="form" #form="ngForm" autocomplete="off" *ngIf="service.formData" (submit)="onSubmit(form)" >
     <div class="container">
         <div class="form-group">
@@ -56,7 +54,8 @@
                 <td>{{ item.amount }}</td>
                 <td>{{ item.total }}</td>
                 <div class="btn-group" role="group">
-                    <td><a (click)="addEditItem(i,service.formData.id)" class="btn btn-warning"><i class="material-icons" style="font-size: 16px;">edit</i></a>
+                    <td>
+                        <!-- <a (click)="addEditItem(i,service.formData.id)" class="btn btn-warning"><i class="material-icons" style="font-size: 16px;">edit</i></a> -->
                         <a (click)="onDeleteOrderItem(item.id, i)" class="btn btn-danger text-white"><i class="material-icons" style="font-size: 16px;">delete</i></a>
                     </td>
                 </div>
@@ -71,5 +70,6 @@
     </div>
 </div>
 </form>
+</div>
 
 

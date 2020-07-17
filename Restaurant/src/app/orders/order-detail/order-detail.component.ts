@@ -2,6 +2,7 @@ import { Component, OnInit, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 
 import { OrderService } from 'src/app/shared/order.service';
+import { UserService } from 'src/app/shared/user.service';
 
 @Component({
   selector: 'app-order-detail',
@@ -16,7 +17,8 @@ export class OrderDetailComponent implements OnInit {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data,
   public dialogRef: MatDialogRef<OrderDetailComponent>,
-  private service: OrderService) { }
+  private service: OrderService,
+  private userService: UserService) { }
 
   ngOnInit(): void {
   
@@ -29,9 +31,16 @@ export class OrderDetailComponent implements OnInit {
     
     
   }
+
+  getUserType(){
+    let userData = this.userService.getUserData()
+    if(userData.identity.name == 'admin'){
+      return true
+    }
+    return false
+  }
   
-  
-      
+   
     
   
   

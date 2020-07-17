@@ -40,9 +40,11 @@ export class OrdersComponent implements OnInit {
     switchMap(x => this.service.getOrderList())
    );
      httpObservable.subscribe((x: any[]) => {
-       if(x.length  === this.orderList.length){
+       if(JSON.stringify(x)  == JSON.stringify(this.orderList)){
+         console.log("sape")
          return;
        }else{
+         console.log(x, this.orderList)
         this.orderList = x
        }
       });

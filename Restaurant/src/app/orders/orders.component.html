@@ -3,11 +3,12 @@
     style="width: 100vw;" [routerLink]="'../order'" >Nuevo Pedido</button>
 </nav>
 
-<div class="container">
+<div class="container card text-center pt-4 pb-4">
+    <h5 *ngIf="orderList.length == 0" class="font-italic">No hay pedidos para mostrar.</h5>
         <div class="card mt-2 pt-2 mb-2 pb-2" *ngFor="let item of orderList" [class.bg-success]="item.status == 2" [class.text-white]="item.status == 2" >
             <div class="card-header">
-                <h5 *ngIf="item.orderType==1"class="card-title text-center">Mesa: {{ item.customer }}</h5>
-                <h5 *ngIf="item.orderType==0"class="card-title text-center">Cliente: {{ item.customer }}</h5>
+                <h5 *ngIf="item.orderType==0"class="card-title text-center">Mesa: {{ item.customer }}</h5>
+                <h5 *ngIf="item.orderType==1"class="card-title text-center">Cliente: {{ item.customer }}</h5>
             </div>
             <div class="card-body" style="@media screen (min-width: 600px) {
                 text-align: center;
@@ -17,8 +18,8 @@
                 <ul> Hora: {{ item.time }} </ul>
                 <ul *ngIf="item.status == 1">Estado: En preparación </ul>
                 <ul *ngIf="item.status == 2">Estado: Listo  </ul>
-                <ul *ngIf="item.orderType == 1"> Tipo: En local</ul>
-                <ul *ngIf="item.orderType == 0"> Tipo: Para llevar </ul>
+                <ul *ngIf="item.orderType == 0"> Tipo: En local</ul>
+                <ul *ngIf="item.orderType == 1"> Tipo: Para llevar </ul>
                 <div class="card-links d-flex justify-content-center">
                     <button type="button" class="btn btn-primary" (click)="getOrderDetail(item.orderNo)">Ver Detalle</button>
                     <button type="button" *ngIf="getUserType()" (click)="updateStatus(item)" class="btn btn-primary">Actualizar Estado</button>
