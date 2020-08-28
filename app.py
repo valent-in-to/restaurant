@@ -10,7 +10,7 @@ app = Flask(__name__)
 CORS(app)
 jwt = JWTManager(app) 
 #app.config["TEMPLATES_AUTO_RELOAD"] = True
-app.config['SECRET_KEY'] = 'elgaty'
+app.config['SECRET_KEY'] = '####'
 
 
 DATABASE = 'restaurant.db'
